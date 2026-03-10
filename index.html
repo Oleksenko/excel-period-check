@@ -70,6 +70,15 @@ button:hover{
     padding-right:5px;
 }
 
+#selectedFile{
+    font-size:13px;
+    color:#444;
+    margin-top:6px;
+    padding:6px 8px;
+    background:#f9fafb;
+    border-radius:5px;
+}
+
 .success{
     color:green;
     font-weight:bold;
@@ -102,6 +111,7 @@ button:hover{
 <div class="input-group">
 <label>Excel файл</label>
 <input type="file" id="fileInput">
+<div id="selectedFile"></div>
 </div>
 
 <button id="checkBtn">Перевірити файл</button>
