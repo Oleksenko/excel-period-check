@@ -83,19 +83,6 @@ function processPeriodGroup(row, idxStart, idxEnd, idxDays, rowNum, label, messa
     const startDates = parseDates(startCell);
     const endDates = parseDates(endCell);
 
-    const month = Number(document.getElementById("month").value);
-    const year = Number(document.getElementById("year").value);
-    
-    if (
-        start.getMonth()+1 !== month ||
-        end.getMonth()+1 !== month ||
-        start.getFullYear() !== year ||
-        end.getFullYear() !== year
-    ) {
-    
-        messages.push(`❌ [Рядок ${rowNum} | ${label}] Період не належить ${month}.${year}`);
-    }
-
     if (typeof startDates === "string") {
         messages.push(`❌ [Рядок ${rowNum} | ${label}] ${startDates}`);
         return {periods:[], days:0, error:true};
@@ -114,10 +101,23 @@ function processPeriodGroup(row, idxStart, idxEnd, idxDays, rowNum, label, messa
     let totalCalculatedDays = 0;
     const periods = [];
 
+    const month = Number(document.getElementById("month").value);
+    const year = Number(document.getElementById("year").value);
+
     for (let i=0;i<startDates.length;i++) {
 
         const start = startDates[i];
         const end = endDates[i];
+
+        if (
+            start.getMonth()+1 !== month ||
+            end.getMonth()+1 !== month ||
+            start.getFullYear() !== year ||
+            end.getFullYear() !== year
+        ) {
+
+            messages.push(`❌ [Рядок ${rowNum} | ${label}] Період не належить ${month}.${year}`);
+        }
 
         if (end < start) {
             messages.push(`❌ [Рядок ${rowNum} | ${label}] Кінець ${end.toLocaleDateString()} раніше початку ${start.toLocaleDateString()}.`);
@@ -155,7 +155,6 @@ function processPeriodGroup(row, idxStart, idxEnd, idxDays, rowNum, label, messa
     return {periods, days:totalCalculatedDays, error:false};
 
 }
-
 function checkPeriods(workbook) {
 
     const sheetName = "30,100";
