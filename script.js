@@ -83,6 +83,19 @@ function processPeriodGroup(row, idxStart, idxEnd, idxDays, rowNum, label, messa
     const startDates = parseDates(startCell);
     const endDates = parseDates(endCell);
 
+    const month = Number(document.getElementById("month").value);
+    const year = Number(document.getElementById("year").value);
+    
+    if (
+        start.getMonth()+1 !== month ||
+        end.getMonth()+1 !== month ||
+        start.getFullYear() !== year ||
+        end.getFullYear() !== year
+    ) {
+    
+        messages.push(`❌ [Рядок ${rowNum} | ${label}] Період не належить ${month}.${year}`);
+    }
+
     if (typeof startDates === "string") {
         messages.push(`❌ [Рядок ${rowNum} | ${label}] ${startDates}`);
         return {periods:[], days:0, error:true};
@@ -204,6 +217,9 @@ document.getElementById("fileInput").addEventListener("change", function(e) {
         const messages = checkPeriods(workbook);
 
         document.getElementById("result").innerHTML = messages.join("<br>");
+
+        // дозволяє повторно вибрати той самий файл
+        document.getElementById("fileInput").value = "";
 
     };
 
