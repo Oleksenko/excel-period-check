@@ -1,0 +1,1 @@
+# excel-period-check
