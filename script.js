@@ -162,7 +162,7 @@ function checkPeriods(workbook) {
     const sheetName = "30,100";
 
     if (!workbook.Sheets[sheetName]) {
-        return [`Лист '${sheetName}' не знайдено.`];
+        return [`❌ Лист '${sheetName}' не знайдено у файлі.`];
     }
 
     const sheet = workbook.Sheets[sheetName];
