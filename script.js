@@ -116,7 +116,9 @@ function processPeriodGroup(row, idxStart, idxEnd, idxDays, rowNum, label, messa
             end.getFullYear() !== year
         ) {
 
-            messages.push(`❌ [Рядок ${rowNum} | ${label}] Період не належить ${month}.${year}`);
+            messages.push(`❌ [Рядок ${rowNum} | ${label}] Період не належить обліковому місяцю ${month}.${year}`);
+
+            return {periods:[], days:0, error:true};
         }
 
         if (end < start) {
@@ -232,7 +234,15 @@ document.getElementById("checkBtn").addEventListener("click", function() {
 
         const messages = checkPeriods(workbook);
 
-        result.innerHTML = messages.join("<br>");
+        const errorCount = messages.filter(m => m.includes("❌") || m.includes("⚠️")).length;
+
+        if (errorCount > 0) {
+            result.innerHTML =
+                `<b>🔴 Знайдено помилок: ${errorCount}</b><br><br>` +
+                messages.join("<br>");
+        } else {
+            result.innerHTML = `<b>🟢 Помилок не знайдено</b><br><br>` + messages.join("<br>");
+        }
 
         fileInput.value = "";
 
