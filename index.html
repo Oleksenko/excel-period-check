@@ -2,35 +2,109 @@
 <html lang="uk">
 <head>
 <meta charset="UTF-8">
-<title>Перевірка Excel</title>
-  <style>
-#result {
-    font-family: Arial;
-    font-size: 16px;
-    line-height: 1.6;
+<title>Перевірка періодів Excel</title>
+
+<style>
+
+body{
+    font-family: Arial, sans-serif;
+    background:#f3f4f6;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
 }
+
+.container{
+    background:white;
+    padding:30px;
+    border-radius:10px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.1);
+    width:420px;
+}
+
+h2{
+    margin-top:0;
+    text-align:center;
+}
+
+.input-group{
+    margin-bottom:15px;
+}
+
+label{
+    font-size:14px;
+    display:block;
+    margin-bottom:5px;
+}
+
+input{
+    width:100%;
+    padding:8px;
+    border-radius:5px;
+    border:1px solid #ccc;
+}
+
+button{
+    width:100%;
+    padding:10px;
+    background:#2563eb;
+    color:white;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+    font-size:15px;
+}
+
+button:hover{
+    background:#1d4ed8;
+}
+
+#result{
+    margin-top:20px;
+    font-size:14px;
+    line-height:1.5;
+}
+
+.success{
+    color:green;
+    font-weight:bold;
+}
+
+.error{
+    color:red;
+}
+
 </style>
+
 </head>
 
 <body>
 
-<h2>Перевірка Excel файлу</h2>
+<div class="container">
 
-Місяць:
+<h2>Перевірка Excel</h2>
+
+<div class="input-group">
+<label>Місяць</label>
 <input type="number" id="month" min="1" max="12">
+</div>
 
-Рік:
-<input type="number" id="year">
+<div class="input-group">
+<label>Рік</label>
+<input type="number" id="year" value="2026">
+</div>
 
-<br><br>
-
+<div class="input-group">
+<label>Excel файл</label>
 <input type="file" id="fileInput">
+</div>
 
-<br><br>
+<button id="checkBtn">Перевірити файл</button>
 
-<button id="checkBtn">Перевірити</button>
+<div id="result"></div>
 
-<p id="result"></p>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 <script src="script.js"></script>
