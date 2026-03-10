@@ -1,1 +1,44 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Перевірка Excel</title>
+</head>
 
+<body>
+
+<h2>Перевірка Excel файлу</h2>
+
+<input type="file" id="fileInput" />
+
+<p id="result"></p>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+<script>
+
+document.getElementById("fileInput").addEventListener("change", function(e) {
+
+    const file = e.target.files[0];
+
+    const reader = new FileReader();
+
+    reader.onload = function(event) {
+
+        const data = new Uint8Array(event.target.result);
+
+        const workbook = XLSX.read(data, { type: "array" });
+
+        document.getElementById("result").innerText =
+            "Excel файл успішно прочитаний. Листів у книзі: " + workbook.SheetNames.length;
+
+    };
+
+    reader.readAsArrayBuffer(file);
+
+});
+
+</script>
+
+</body>
+</html>
