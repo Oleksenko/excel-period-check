@@ -162,8 +162,11 @@ function checkPeriods(workbook) {
     const sheetName = "30,100";
 
     if (!workbook.Sheets[sheetName]) {
-        const availableSheets = workbook.SheetNames.join(", ");
-        return [`❌ Лист '${sheetName}' не знайдено. У файлі є: ${availableSheets}`];
+        const availableSheets = workbook.SheetNames && workbook.SheetNames.length
+            ? workbook.SheetNames.join(", ")
+            : "жодного листа";
+    
+        return [`❌ Лист '${sheetName}' не знайдено. Доступні листи: ${availableSheets}`];
     }
 
     const sheet = workbook.Sheets[sheetName];
