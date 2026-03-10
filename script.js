@@ -212,6 +212,15 @@ function checkPeriods(workbook) {
 const fileInput = document.getElementById("fileInput");
 const result = document.getElementById("result");
 
+fileInput.addEventListener("change", function(){
+
+    if(fileInput.files.length > 0){
+        document.getElementById("selectedFile").innerText =
+            "📄 Обраний файл: " + fileInput.files[0].name;
+    }
+
+});
+
 document.getElementById("checkBtn").addEventListener("click", function() {
 
     const file = fileInput.files[0];
@@ -229,6 +238,8 @@ document.getElementById("checkBtn").addEventListener("click", function() {
         return;
     }
 
+    result.innerHTML = "⏳ Перевіряю файл...";
+    
     const reader = new FileReader();
 
     reader.onload = function(event) {
@@ -249,6 +260,9 @@ document.getElementById("checkBtn").addEventListener("click", function() {
         }
 
         fileInput.value = "";
+
+        document.getElementById("selectedFile").innerText =
+            "✔ Перевірка завершена. Можете обрати інший файл.";
 
     };
 
