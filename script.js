@@ -1,1 +1,190 @@
+function parseDates(cellValue) {
 
+    if (!cellValue) return [];
+
+    let raw = String(cellValue);
+
+    const delimiters = ['\n', '\r', ',', ';', ' '];
+
+    delimiters.forEach(d => {
+        raw = raw.split(d).join('\n');
+    });
+
+    const parts = raw.split('\n').map(p => p.trim()).filter(p => p);
+
+    const parsed = [];
+
+    for (let p of parts) {
+
+        let date;
+
+        if (/^\d{2}\.\d{2}\.\d{4}$/.test(p)) {
+
+            const [d,m,y] = p.split(".");
+            date = new Date(y, m-1, d);
+
+        } else if (/^\d{4}-\d{2}-\d{2}$/.test(p)) {
+
+            const [y,m,d] = p.split("-");
+            date = new Date(y, m-1, d);
+
+        } else {
+            return `Невірний формат дати: '${p}'`;
+        }
+
+        parsed.push(date);
+
+    }
+
+    return parsed;
+
+}
+
+function daysBetween(start, end) {
+
+    const diff = end - start;
+
+    return Math.floor(diff / (1000*60*60*24)) + 1;
+
+}
+
+function processPeriodGroup(row, idxStart, idxEnd, idxDays, rowNum, label, messages) {
+
+    const startCell = row[idxStart];
+    const endCell = row[idxEnd];
+    const totalDaysCell = row[idxDays];
+
+    if (!startCell && !endCell && !totalDaysCell) {
+        return {periods:[], days:0, error:false};
+    }
+
+    const startDates = parseDates(startCell);
+    const endDates = parseDates(endCell);
+
+    if (typeof startDates === "string") {
+        messages.push(`❌ [Рядок ${rowNum} | ${label}] ${startDates}`);
+        return {periods:[], days:0, error:true};
+    }
+
+    if (typeof endDates === "string") {
+        messages.push(`❌ [Рядок ${rowNum} | ${label}] ${endDates}`);
+        return {periods:[], days:0, error:true};
+    }
+
+    if (startDates.length !== endDates.length) {
+        messages.push(`❌ [Рядок ${rowNum} | ${label}] Нерівна кількість початкових і кінцевих дат.`);
+        return {periods:[], days:0, error:true};
+    }
+
+    let totalCalculatedDays = 0;
+    const periods = [];
+
+    for (let i=0;i<startDates.length;i++) {
+
+        const start = startDates[i];
+        const end = endDates[i];
+
+        if (end < start) {
+            messages.push(`❌ [Рядок ${rowNum} | ${label}] Кінець ${end.toLocaleDateString()} раніше початку ${start.toLocaleDateString()}.`);
+            continue;
+        }
+
+        totalCalculatedDays += daysBetween(start,end);
+        periods.push([start,end]);
+
+    }
+
+    const sorted = periods.slice().sort((a,b)=>a[0]-b[0]);
+
+    for (let i=1;i<sorted.length;i++) {
+
+        const prevEnd = sorted[i-1][1];
+        const currentStart = sorted[i][0];
+
+        if (currentStart <= prevEnd) {
+
+            messages.push(`⚠️ [Рядок ${rowNum} | ${label}] Періоди перетинаються.`);
+            return {periods, days:totalCalculatedDays, error:true};
+
+        }
+
+    }
+
+    if (Number(totalDaysCell) !== totalCalculatedDays) {
+
+        messages.push(`❌ [Рядок ${rowNum} | ${label}] Очікувалося ${totalCalculatedDays} днів, але вказано ${totalDaysCell}.`);
+        return {periods, days:totalCalculatedDays, error:true};
+
+    }
+
+    return {periods, days:totalCalculatedDays, error:false};
+
+}
+
+function checkPeriods(workbook) {
+
+    const sheetName = "30,100";
+
+    if (!workbook.Sheets[sheetName]) {
+        return [`Лист '${sheetName}' не знайдено.`];
+    }
+
+    const sheet = workbook.Sheets[sheetName];
+
+    const rows = XLSX.utils.sheet_to_json(sheet,{header:1});
+
+    const messages = [];
+    let anyErrors = false;
+
+    for (let r=5;r<rows.length;r++) {
+
+        const row = rows[r];
+        const rowNum = r+1;
+
+        const res1 = processPeriodGroup(row,4,5,6,rowNum,"E/F/G",messages);
+        const res2 = processPeriodGroup(row,8,9,10,rowNum,"I/J/K",messages);
+
+        if (res1.error || res2.error) anyErrors = true;
+
+        for (let p1 of res1.periods) {
+            for (let p2 of res2.periods) {
+
+                if (!(p1[1] < p2[0] || p2[1] < p1[0])) {
+
+                    messages.push(`⚠️ [Рядок ${rowNum}] Перетин між групами E/F/G і I/J/K`);
+                    anyErrors = true;
+
+                }
+
+            }
+        }
+
+    }
+
+    if (!anyErrors) {
+        messages.push("✅ Усі рядки коректні.");
+    }
+
+    return messages;
+
+}
+
+document.getElementById("fileInput").addEventListener("change", function(e) {
+
+    const file = e.target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = function(event) {
+
+        const data = new Uint8Array(event.target.result);
+        const workbook = XLSX.read(data,{type:"array"});
+
+        const messages = checkPeriods(workbook);
+
+        document.getElementById("result").innerHTML = messages.join("<br>");
+
+    };
+
+    reader.readAsArrayBuffer(file);
+
+});
