@@ -241,7 +241,7 @@ document.getElementById("checkBtn").addEventListener("click", function() {
                 `<b>🔴 Знайдено помилок: ${errorCount}</b><br><br>` +
                 messages.join("<br>");
         } else {
-            result.innerHTML = `<b>🟢 Помилок не знайдено</b><br><br>` + messages.join("<br>");
+            result.innerHTML = `<b>🟢 Помилок не знайдено</b>`;
         }
 
         fileInput.value = "";
