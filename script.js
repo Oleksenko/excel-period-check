@@ -204,9 +204,26 @@ function checkPeriods(workbook) {
 
 }
 
-document.getElementById("fileInput").addEventListener("change", function(e) {
+const fileInput = document.getElementById("fileInput");
+const result = document.getElementById("result");
 
-    const file = e.target.files[0];
+document.getElementById("checkBtn").addEventListener("click", function() {
+
+    const file = fileInput.files[0];
+
+    const month = Number(document.getElementById("month").value);
+    const year = Number(document.getElementById("year").value);
+
+    if (!file) {
+        result.innerHTML = "❗ Оберіть Excel файл.";
+        return;
+    }
+
+    if (!month || !year) {
+        result.innerHTML = "❗ Вкажіть місяць і рік.";
+        return;
+    }
+
     const reader = new FileReader();
 
     reader.onload = function(event) {
@@ -216,10 +233,9 @@ document.getElementById("fileInput").addEventListener("change", function(e) {
 
         const messages = checkPeriods(workbook);
 
-        document.getElementById("result").innerHTML = messages.join("<br>");
+        result.innerHTML = messages.join("<br>");
 
-        // дозволяє повторно вибрати той самий файл
-        document.getElementById("fileInput").value = "";
+        fileInput.value = "";
 
     };
 
