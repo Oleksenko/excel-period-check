@@ -1,6 +1,21 @@
+function excelDateToJSDate(serial) {
+
+    const utc_days  = Math.floor(serial - 25569);
+    const utc_value = utc_days * 86400;                                        
+    const date_info = new Date(utc_value * 1000);
+
+    return new Date(date_info.getFullYear(), date_info.getMonth(), date_info.getDate());
+
+}
+
 function parseDates(cellValue) {
 
     if (!cellValue) return [];
+
+    // якщо Excel число
+    if (typeof cellValue === "number") {
+        return [excelDateToJSDate(cellValue)];
+    }
 
     let raw = String(cellValue);
 
@@ -28,8 +43,15 @@ function parseDates(cellValue) {
             const [y,m,d] = p.split("-");
             date = new Date(y, m-1, d);
 
+        } else if (!isNaN(p)) {
+
+            // Excel serial number
+            date = excelDateToJSDate(Number(p));
+
         } else {
+
             return `Невірний формат дати: '${p}'`;
+
         }
 
         parsed.push(date);
