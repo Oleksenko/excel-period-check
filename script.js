@@ -211,6 +211,7 @@ function checkPeriods(workbook) {
 
 const fileInput = document.getElementById("fileInput");
 const result = document.getElementById("result");
+const copyBtn = document.getElementById("copyBtn");
 
 fileInput.addEventListener("change", function(){
 
@@ -252,11 +253,13 @@ document.getElementById("checkBtn").addEventListener("click", function() {
         const errorCount = messages.filter(m => m.includes("❌") || m.includes("⚠️")).length;
 
         if (errorCount > 0) {
+            copyBtn.disabled = false;
             result.innerHTML =
                 `<b>🔴 Знайдено помилок: ${errorCount}</b><br><br>` +
                 messages.join("<br>");
         } else {
             result.innerHTML = `<b>🟢 Помилок не знайдено</b>`;
+            copyBtn.disabled = true;
         }
 
         fileInput.value = "";
