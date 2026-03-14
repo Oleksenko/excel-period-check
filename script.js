@@ -301,16 +301,29 @@ function checkRowNumbers(rows, messages){
 
     for(let r = 5; r < rows.length; r++){
 
-        const value = rows[r][0];
+        const row = rows[r];
 
-        if(value === undefined || value === null || value === "") continue;
-
-        const number = Number(value);
-
-        if(isNaN(number)) continue;
+        // пропускаємо повністю пусті рядки
+        if(!row || row.every(c => c === undefined || c === null || c === "")) continue;
 
         // це реальна людина
         peopleCount++;
+
+        const value = row[0];
+
+        if(value === undefined || value === null || value === ""){
+            messages.push(`❌ Відсутній порядковий номер (рядок ${r+1})`);
+            hasError = true;
+            continue;
+        }
+
+        const number = Number(value);
+
+        if(isNaN(number)){
+            messages.push(`❌ Невірний формат номера (рядок ${r+1})`);
+            hasError = true;
+            continue;
+        }
 
         lastNumber = number;
 
