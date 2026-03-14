@@ -173,10 +173,10 @@ function checkPeriods(workbook) {
 
     const rows = XLSX.utils.sheet_to_json(sheet,{header:1});
 
-    checkRowNumbers(rows, messages);
-
     const messages = [];
     let anyErrors = false;
+
+    checkRowNumbers(rows, messages);
 
     for (let r=5;r<rows.length;r++) {
 
