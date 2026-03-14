@@ -294,19 +294,36 @@ document.getElementById("copyBtn").addEventListener("click", function(){
 
 function checkRowNumbers(rows, messages){
 
-    let expected = null;
-    let lastNumber = null;
+    let startRow = null;
+
+    // шукаємо перший номер = 1
+    for(let r = 5; r < rows.length; r++){
+
+        const value = Number(rows[r]?.[0]);
+
+        if(value === 1){
+            startRow = r;
+            break;
+        }
+
+    }
+
+    if(startRow === null){
+        messages.push("❌ Не знайдено початок нумерації (номер 1)");
+        return true;
+    }
+
+    let expected = 1;
     let peopleCount = 0;
+    let lastNumber = 0;
     let hasError = false;
 
-    for(let r = 5; r < rows.length; r++){
+    for(let r = startRow; r < rows.length; r++){
 
         const row = rows[r];
 
-        // пропускаємо повністю пусті рядки
         if(!row || row.every(c => c === undefined || c === null || c === "")) continue;
 
-        // це реальна людина
         peopleCount++;
 
         const value = row[0];
@@ -325,28 +342,14 @@ function checkRowNumbers(rows, messages){
             continue;
         }
 
-        lastNumber = number;
-
-        if(expected === null){
-
+        if(number !== expected){
+            messages.push(`❌ Порушена нумерація: очікувався ${expected}, але знайдено ${number} (рядок ${r+1})`);
             expected = number;
-
-            if(number !== 1){
-                messages.push(`❌ Нумерація повинна починатись з 1 (рядок ${r+1})`);
-                hasError = true;
-            }
-
-        } else {
-
-            expected++;
-
-            if(number !== expected){
-                messages.push(`❌ Порушена нумерація: очікувався ${expected}, але знайдено ${number} (рядок ${r+1})`);
-                expected = number;
-                hasError = true;
-            }
-
+            hasError = true;
         }
+
+        lastNumber = number;
+        expected++;
 
     }
 
