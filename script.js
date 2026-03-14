@@ -269,3 +269,18 @@ document.getElementById("checkBtn").addEventListener("click", function() {
     reader.readAsArrayBuffer(file);
 
 });
+
+document.getElementById("copyBtn").addEventListener("click", function(){
+
+    const text = document.getElementById("result").innerText;
+
+    if(!text){
+        alert("Немає повідомлень для копіювання.");
+        return;
+    }
+
+    navigator.clipboard.writeText(text);
+
+    alert("Повідомлення скопійовано 📋");
+
+});
