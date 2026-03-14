@@ -303,16 +303,14 @@ function checkRowNumbers(rows, messages){
 
         const value = rows[r][0];
 
-        // рахуємо людей (рядок має дані)
-        if(rows[r].length > 0){
-            peopleCount++;
-        }
-
         if(value === undefined || value === null || value === "") continue;
 
         const number = Number(value);
 
         if(isNaN(number)) continue;
+
+        // це реальна людина
+        peopleCount++;
 
         lastNumber = number;
 
@@ -339,11 +337,9 @@ function checkRowNumbers(rows, messages){
 
     }
 
-    // нова перевірка
     if(lastNumber !== peopleCount){
 
-        messages.push(`❌ Кількість номерів (${lastNumber}) не співпадає з кількістю рядків (${peopleCount})`);
-
+        messages.push(`❌ Кількість номерів (${lastNumber}) не співпадає з кількістю людей (${peopleCount})`);
         hasError = true;
 
     }
