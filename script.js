@@ -295,11 +295,18 @@ document.getElementById("copyBtn").addEventListener("click", function(){
 function checkRowNumbers(rows, messages){
 
     let expected = null;
+    let lastNumber = null;
+    let peopleCount = 0;
     let hasError = false;
 
     for(let r = 5; r < rows.length; r++){
 
         const value = rows[r][0];
+
+        // рахуємо людей (рядок має дані)
+        if(rows[r].length > 0){
+            peopleCount++;
+        }
 
         if(value === undefined || value === null || value === "") continue;
 
@@ -307,12 +314,14 @@ function checkRowNumbers(rows, messages){
 
         if(isNaN(number)) continue;
 
+        lastNumber = number;
+
         if(expected === null){
 
             expected = number;
 
             if(number !== 1){
-                messages.push(`⚠️ Нумерація починається з ${number} (рядок ${r+1})`);
+                messages.push(`❌ Нумерація повинна починатись з 1 (рядок ${r+1})`);
                 hasError = true;
             }
 
@@ -327,6 +336,15 @@ function checkRowNumbers(rows, messages){
             }
 
         }
+
+    }
+
+    // нова перевірка
+    if(lastNumber !== peopleCount){
+
+        messages.push(`❌ Кількість номерів (${lastNumber}) не співпадає з кількістю рядків (${peopleCount})`);
+
+        hasError = true;
 
     }
 
