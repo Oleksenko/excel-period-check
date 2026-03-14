@@ -173,6 +173,8 @@ function checkPeriods(workbook) {
 
     const rows = XLSX.utils.sheet_to_json(sheet,{header:1});
 
+    checkRowNumbers(rows, messages);
+
     const messages = [];
     let anyErrors = false;
 
@@ -287,3 +289,40 @@ document.getElementById("copyBtn").addEventListener("click", function(){
     alert("Повідомлення скопійовано 📋");
 
 });
+
+function checkRowNumbers(rows, messages){
+
+    let expected = null;
+
+    for(let r = 5; r < rows.length; r++){
+
+        const value = rows[r][0];
+
+        if(value === undefined || value === null || value === "") continue;
+
+        const number = Number(value);
+
+        if(isNaN(number)) continue;
+
+        if(expected === null){
+
+            expected = number;
+
+            if(number !== 1){
+                messages.push(`⚠️ Нумерація починається з ${number} (рядок ${r+1})`);
+            }
+
+        } else {
+
+            expected++;
+
+            if(number !== expected){
+                messages.push(`❌ Порушена нумерація: очікувався ${expected}, але знайдено ${number} (рядок ${r+1})`);
+                expected = number;
+            }
+
+        }
+
+    }
+
+}
