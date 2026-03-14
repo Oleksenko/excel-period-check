@@ -176,7 +176,9 @@ function checkPeriods(workbook) {
     const messages = [];
     let anyErrors = false;
 
-    checkRowNumbers(rows, messages);
+    if(checkRowNumbers(rows, messages)){
+    anyErrors = true;
+    }
 
     for (let r=5;r<rows.length;r++) {
 
@@ -293,6 +295,7 @@ document.getElementById("copyBtn").addEventListener("click", function(){
 function checkRowNumbers(rows, messages){
 
     let expected = null;
+    let hasError = false;
 
     for(let r = 5; r < rows.length; r++){
 
@@ -310,6 +313,7 @@ function checkRowNumbers(rows, messages){
 
             if(number !== 1){
                 messages.push(`⚠️ Нумерація починається з ${number} (рядок ${r+1})`);
+                hasError = true;
             }
 
         } else {
@@ -319,10 +323,13 @@ function checkRowNumbers(rows, messages){
             if(number !== expected){
                 messages.push(`❌ Порушена нумерація: очікувався ${expected}, але знайдено ${number} (рядок ${r+1})`);
                 expected = number;
+                hasError = true;
             }
 
         }
 
     }
+
+    return hasError;
 
 }
