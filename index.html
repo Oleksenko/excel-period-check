@@ -88,6 +88,11 @@ button:hover{
     background:#4b5563;
 }
 
+#copyBtn:disabled{
+    background:#9ca3af;
+    cursor:not-allowed;
+}
+
 .success{
     color:green;
     font-weight:bold;
@@ -125,7 +130,7 @@ button:hover{
 
 <button id="checkBtn">Перевірити файл</button>
 
-<button id="copyBtn">📋 Скопіювати помилки</button>
+<button id="copyBtn" disabled>📋 Скопіювати помилки</button>
 
 <div id="result"></div>
 
