@@ -45,7 +45,7 @@ function checkHeader(rows, month, year, messages){
         for(const m of monthNames[key]){
 
             if(headerText.includes(m)){
-                messages.push(`❌ У шапці файлу знайдено інший місяць "${m}"`);
+                messages.push(`❌ У шапці файлу знайдено інший місяць "${m}". Очікується "${expectedMonths[0]}"`);
                 return true;
             }
 
