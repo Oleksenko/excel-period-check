@@ -66,11 +66,22 @@ function checkHeader(rows, month, year, messages){
 
     }
 
-    // перевірка року
-    const yearRegex = new RegExp(`\\b${year}\\b`);
-
-    if(!yearRegex.test(headerText)){
-        messages.push(`❌ У шапці файлу не знайдено рік "${year}"`);
+    // перевірка "місяць + рік" разом
+    let correctMonthYear = false;
+    
+    for(const m of monthForms[month].ok){
+    
+        const pattern = new RegExp(`${m}\\s+${year}`);
+    
+        if(pattern.test(headerText)){
+            correctMonthYear = true;
+            break;
+        }
+    
+    }
+    
+    if(!correctMonthYear){
+        messages.push(`❌ У шапці файлу не знайдено "${monthForms[month].ok.join('" або "')}" ${year}`);
         return true;
     }
     return false;
