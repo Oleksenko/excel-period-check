@@ -67,13 +67,12 @@ function checkHeader(rows, month, year, messages){
     }
 
     // перевірка року
-    if(!headerText.includes(year)){
+    const yearRegex = new RegExp(`\\b${year}\\b`);
 
+    if(!yearRegex.test(headerText)){
         messages.push(`❌ У шапці файлу не знайдено рік "${year}"`);
         return true;
-
     }
-
     return false;
 
 }
