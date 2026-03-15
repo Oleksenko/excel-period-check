@@ -220,8 +220,16 @@ const copyBtn = document.getElementById("copyBtn");
 fileInput.addEventListener("change", function(){
 
     if(fileInput.files.length > 0){
+
         document.getElementById("selectedFile").innerText =
             "📄 Обраний файл: " + fileInput.files[0].name;
+
+        // очищаємо попередній результат
+        result.innerHTML = "";
+
+        // вимикаємо кнопку копіювання
+        copyBtn.disabled = true;
+
     }
 
 });
