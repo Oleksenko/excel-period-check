@@ -1,3 +1,48 @@
+const monthNames = {
+    1: ["січень","січня","січні"],
+    2: ["лютий","лютого","лютому"],
+    3: ["березень","березня","березні"],
+    4: ["квітень","квітня","квітні"],
+    5: ["травень","травня","травні"],
+    6: ["червень","червня","червні"],
+    7: ["липень","липня","липні"],
+    8: ["серпень","серпня","серпні"],
+    9: ["вересень","вересня","вересні"],
+    10:["жовтень","жовтня","жовтні"],
+    11:["листопад","листопада","листопаді"],
+    12:["грудень","грудня","грудні"]
+};
+
+function checkHeader(rows, month, year, messages){
+
+    const header1 = String(rows[0]?.[0] || "").toLowerCase();
+    const header2 = String(rows[1]?.[0] || "").toLowerCase();
+
+    const months = monthNames[month] || [];
+
+    let monthFound = false;
+
+    for(const m of months){
+        if(header1.includes(m) || header2.includes(m)){
+            monthFound = true;
+            break;
+        }
+    }
+
+    if(!monthFound){
+        messages.push(`❌ У шапці файлу не знайдено місяць "${months[0]}"`);
+        return true;
+    }
+
+    if(!header1.includes(year) && !header2.includes(year)){
+        messages.push(`❌ У шапці файлу не знайдено рік "${year}"`);
+        return true;
+    }
+
+    return false;
+
+}
+
 function excelDateToJSDate(serial) {
 
     const utc_days  = Math.floor(serial - 25569);
@@ -175,6 +220,13 @@ function checkPeriods(workbook) {
 
     const messages = [];
     let anyErrors = false;
+    
+    const month = Number(document.getElementById("month").value);
+    const year = Number(document.getElementById("year").value);
+    
+    if(checkHeader(rows, month, year, messages)){
+        anyErrors = true;
+    }
 
     if(checkRowNumbers(rows, messages)){
     anyErrors = true;
