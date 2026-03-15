@@ -1,16 +1,16 @@
-const monthNames = {
-    1: ["січень","січня","січні"],
-    2: ["лютий","лютому"],
-    3: ["березень","березня","березні"],
-    4: ["квітень","квітня","квітні"],
-    5: ["травень","травня","травні"],
-    6: ["червень","червня","червні"],
-    7: ["липень","липня","липні"],
-    8: ["серпень","серпня","серпні"],
-    9: ["вересень","вересня","вересні"],
-    10:["жовтень","жовтня","жовтні"],
-    11:["листопад","листопада","листопаді"],
-    12:["грудень","грудня","грудні"]
+const monthForms = {
+    1: { ok:["січень","січні"], all:["січень","січня","січні"] },
+    2: { ok:["лютий","лютому"], all:["лютий","лютого","лютому"] },
+    3: { ok:["березень","березні"], all:["березень","березня","березні"] },
+    4: { ok:["квітень","квітні"], all:["квітень","квітня","квітні"] },
+    5: { ok:["травень","травні"], all:["травень","травня","травні"] },
+    6: { ok:["червень","червні"], all:["червень","червня","червні"] },
+    7: { ok:["липень","липні"], all:["липень","липня","липні"] },
+    8: { ok:["серпень","серпні"], all:["серпень","серпня","серпні"] },
+    9: { ok:["вересень","вересні"], all:["вересень","вересня","вересні"] },
+    10:{ ok:["жовтень","жовтні"], all:["жовтень","жовтня","жовтні"] },
+    11:{ ok:["листопад","листопаді"], all:["листопад","листопада","листопаді"] },
+    12:{ ok:["грудень","грудні"], all:["грудень","грудня","грудні"] }
 };
 
 function checkHeader(rows, month, year, messages){
@@ -20,43 +20,58 @@ function checkHeader(rows, month, year, messages){
 
     const headerText = header1 + " " + header2;
 
-    const expectedMonths = monthNames[month] || [];
+    let foundMonth = null;
+    let foundMonthKey = null;
 
-    let expectedFound = false;
+    // шукаємо будь-який місяць у тексті
+    for(const key in monthForms){
 
-    // перевіряємо що правильний місяць є
-    for(const m of expectedMonths){
-        if(headerText.includes(m)){
-            expectedFound = true;
-            break;
-        }
-    }
+        const forms = monthForms[key];
 
-    if(!expectedFound){
-        messages.push(`❌ У шапці файлу не знайдено місяць "${expectedMonths[0]}"`);
-        return true;
-    }
-
-    // перевіряємо що інших місяців немає
-    for(const key in monthNames){
-
-        if(Number(key) === month) continue;
-
-        for(const m of monthNames[key]){
+        for(const m of forms.all){
 
             if(headerText.includes(m)){
-                messages.push(`❌ У шапці файлу знайдено інший місяць "${m}". Очікується "${expectedMonths[0]}"`);
-                return true;
+                foundMonth = m;
+                foundMonthKey = Number(key);
+                break;
             }
 
         }
+
+        if(foundMonth) break;
+
+    }
+
+    if(!foundMonth){
+        messages.push(`❌ У шапці файлу не знайдено жодного місяця`);
+        return true;
+    }
+
+    // перевірка правильного місяця
+    if(foundMonthKey !== month){
+
+        const expected = monthForms[month].ok[0];
+
+        messages.push(`❌ У шапці файлу знайдено місяць "${foundMonth}". Очікується "${expected}"`);
+        return true;
+    }
+
+    // перевірка відмінку
+    const correctForms = monthForms[month].ok;
+
+    if(!correctForms.includes(foundMonth)){
+
+        messages.push(`❌ Неправильний відмінок місяця "${foundMonth}". Очікується "${correctForms.join('" або "')}"`);
+        return true;
 
     }
 
     // перевірка року
     if(!headerText.includes(year)){
+
         messages.push(`❌ У шапці файлу не знайдено рік "${year}"`);
         return true;
+
     }
 
     return false;
