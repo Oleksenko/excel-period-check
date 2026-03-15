@@ -15,8 +15,8 @@ const monthNames = {
 
 function checkHeader(rows, month, year, messages){
 
-    const header1 = String(rows[0]?.[0] || "").toLowerCase();
-    const header2 = String(rows[1]?.[0] || "").toLowerCase();
+    const header1 = (rows[0] || []).join(" ").toLowerCase();
+    const header2 = (rows[1] || []).join(" ").toLowerCase();
 
     const headerText = header1 + " " + header2;
 
