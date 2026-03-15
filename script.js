@@ -296,7 +296,6 @@ function checkRowNumbers(rows, messages){
 
     let startRow = null;
 
-    // шукаємо перший номер = 1
     for(let r = 5; r < rows.length; r++){
 
         const value = Number(rows[r]?.[0]);
@@ -321,16 +320,16 @@ function checkRowNumbers(rows, messages){
     for(let r = startRow; r < rows.length; r++){
 
         const row = rows[r];
-    
+
         if(
             !row[4] && !row[5] && !row[6] &&
             !row[8] && !row[9] && !row[10]
         ){
             break;
         }
-    
+
         peopleCount++;
-    
+
         const value = row[0];
 
         if(value === undefined || value === null || value === ""){
@@ -349,7 +348,6 @@ function checkRowNumbers(rows, messages){
 
         if(number !== expected){
             messages.push(`❌ Порушена нумерація: очікувався ${expected}, але знайдено ${number} (рядок ${r+1})`);
-            expected = number;
             hasError = true;
         }
 
@@ -359,10 +357,8 @@ function checkRowNumbers(rows, messages){
     }
 
     if(lastNumber !== peopleCount){
-
         messages.push(`❌ Кількість номерів (${lastNumber}) не співпадає з кількістю людей (${peopleCount})`);
         hasError = true;
-
     }
 
     return hasError;
