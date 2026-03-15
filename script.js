@@ -321,11 +321,16 @@ function checkRowNumbers(rows, messages){
     for(let r = startRow; r < rows.length; r++){
 
         const row = rows[r];
-
-        if(!row || row.every(c => c === undefined || c === null || c === "")) continue;
-
+    
+        if(
+            !row[4] && !row[5] && !row[6] &&
+            !row[8] && !row[9] && !row[10]
+        ){
+            break;
+        }
+    
         peopleCount++;
-
+    
         const value = row[0];
 
         if(value === undefined || value === null || value === ""){
