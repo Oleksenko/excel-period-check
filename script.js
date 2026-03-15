@@ -18,23 +18,43 @@ function checkHeader(rows, month, year, messages){
     const header1 = String(rows[0]?.[0] || "").toLowerCase();
     const header2 = String(rows[1]?.[0] || "").toLowerCase();
 
-    const months = monthNames[month] || [];
+    const headerText = header1 + " " + header2;
 
-    let monthFound = false;
+    const expectedMonths = monthNames[month] || [];
 
-    for(const m of months){
-        if(header1.includes(m) || header2.includes(m)){
-            monthFound = true;
+    let expectedFound = false;
+
+    // перевіряємо що правильний місяць є
+    for(const m of expectedMonths){
+        if(headerText.includes(m)){
+            expectedFound = true;
             break;
         }
     }
 
-    if(!monthFound){
-        messages.push(`❌ У шапці файлу не знайдено місяць "${months[0]}"`);
+    if(!expectedFound){
+        messages.push(`❌ У шапці файлу не знайдено місяць "${expectedMonths[0]}"`);
         return true;
     }
 
-    if(!header1.includes(year) && !header2.includes(year)){
+    // перевіряємо що інших місяців немає
+    for(const key in monthNames){
+
+        if(Number(key) === month) continue;
+
+        for(const m of monthNames[key]){
+
+            if(headerText.includes(m)){
+                messages.push(`❌ У шапці файлу знайдено інший місяць "${m}"`);
+                return true;
+            }
+
+        }
+
+    }
+
+    // перевірка року
+    if(!headerText.includes(year)){
         messages.push(`❌ У шапці файлу не знайдено рік "${year}"`);
         return true;
     }
