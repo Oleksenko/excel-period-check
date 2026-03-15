@@ -322,6 +322,7 @@ function checkRowNumbers(rows, messages){
         const row = rows[r];
 
         if(
+            !row[2] && !row[3] &&
             !row[4] && !row[5] && !row[6] &&
             !row[8] && !row[9] && !row[10]
         ){
