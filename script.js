@@ -314,6 +314,48 @@ function processPeriodGroup(row, idxStart, idxEnd, idxDays, rowNum, label, messa
     return {periods, days:totalCalculatedDays, error:false};
 
 }
+
+function checkAdditionalSheets(workbook, month, year, messages){
+
+    const requiredSheets = [
+        "безвісті, загинули",
+        "лікування",
+        "СЗЧ"
+    ];
+
+    let hasError = false;
+
+    for(const sheetName of requiredSheets){
+
+        const sheet = workbook.Sheets[sheetName];
+
+        if(!sheet){
+
+            messages.push(`❌ Не знайдено лист "${sheetName}"`);
+            hasError = true;
+            continue;
+
+        }
+
+        const rows = XLSX.utils.sheet_to_json(sheet,{header:1});
+
+        // передаємо тільки перший рядок
+        const headerRows = [
+            rows[0] || [],
+            [] // другий рядок пустий щоб функція не зламалась
+        ];
+
+        if(checkHeader(headerRows, month, year, messages)){
+            messages.push(`❌ Помилка у шапці листа "${sheetName}"`);
+            hasError = true;
+        }
+
+    }
+
+    return hasError;
+
+}
+
 function checkPeriods(workbook) {
 
     const sheetName = "30,100";
@@ -338,6 +380,10 @@ function checkPeriods(workbook) {
     
     if(checkHeader(rows, month, year, messages)){
         anyErrors = true;
+    }
+
+    if(checkAdditionalSheets(workbook, month, year, messages)){
+    anyErrors = true;
     }
 
     if(checkRowNumbers(rows, messages)){
