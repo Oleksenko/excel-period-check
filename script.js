@@ -118,7 +118,7 @@ function checkHeader(rows, month, year, messages){
     
     for(const m of monthForms[month].ok){
     
-        const pattern = new RegExp(`${m}\\s+${year}`);
+        const pattern = new RegExp(`${m}(\\s+місяц[іу])?\\s+${year}`);
     
         if(pattern.test(headerText)){
             correctMonthYear = true;
@@ -147,6 +147,8 @@ function checkHeader(rows, month, year, messages){
     for(const w of words){
 
         if(w.length < 5) continue;
+
+        if(w === "травм") continue;
 
         for(const root of monthRoots){
 
