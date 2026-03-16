@@ -20,6 +20,20 @@ function checkHeader(rows, month, year, messages){
 
     const headerText = header1 + " " + header2;
 
+    // перевірка років у шапці
+    const yearsFound = headerText.match(/\b20\d{2}\b/g) || [];
+    const uniqueYears = [...new Set(yearsFound)];
+    
+    if(uniqueYears.length > 1){
+        messages.push(`❌ У шапці знайдено різні роки: ${uniqueYears.join(", ")}`);
+        return true;
+    }
+    
+    if(uniqueYears.length === 1 && Number(uniqueYears[0]) !== year){
+        messages.push(`❌ У шапці вказано рік "${uniqueYears[0]}". Очікується "${year}"`);
+        return true;
+    }
+
     let foundMonth = null;
     let foundMonthKey = null;
 
