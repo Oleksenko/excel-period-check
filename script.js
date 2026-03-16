@@ -34,43 +34,52 @@ function checkHeader(rows, month, year, messages){
         return true;
     }
 
-    let foundMonth = null;
-    let foundMonthKey = null;
+    // -----------------------------
+    // пошук усіх місяців у тексті
+    // -----------------------------
 
-    // шукаємо будь-який місяць у тексті
+    let monthsFound = [];
+
     for(const key in monthForms){
 
-        const forms = monthForms[key];
-
-        for(const m of forms.all){
+        for(const m of monthForms[key].all){
 
             if(headerText.includes(m)){
-                foundMonth = m;
-                foundMonthKey = Number(key);
-                break;
+                monthsFound.push({month:Number(key), word:m});
             }
 
         }
 
-        if(foundMonth) break;
+    }
+
+    const uniqueMonths = [...new Set(monthsFound.map(m => m.month))];
+
+    if(uniqueMonths.length > 1){
+
+        const names = monthsFound.map(m => `"${m.word}"`).join(", ");
+
+        messages.push(`❌ У шапці знайдено різні місяці: ${names}`);
+        return true;
 
     }
 
-    if(!foundMonth){
+    if(uniqueMonths.length === 1 && uniqueMonths[0] !== month){
+
+        messages.push(`❌ У шапці вказано місяць "${monthsFound[0].word}". Очікується "${monthForms[month].ok[0]}"`);
+        return true;
+
+    }
+
+    if(uniqueMonths.length === 0){
         messages.push(`❌ У шапці файлу не знайдено жодного місяця`);
         return true;
     }
 
-    // перевірка правильного місяця
-    if(foundMonthKey !== month){
-
-        const expected = monthForms[month].ok[0];
-
-        messages.push(`❌ У шапці файлу знайдено місяць "${foundMonth}". Очікується "${expected}"`);
-        return true;
-    }
-
+    // -----------------------------
     // перевірка відмінку
+    // -----------------------------
+
+    const foundMonth = monthsFound[0].word;
     const correctForms = monthForms[month].ok;
 
     if(!correctForms.includes(foundMonth)){
@@ -80,7 +89,10 @@ function checkHeader(rows, month, year, messages){
 
     }
 
-    // перевірка "місяць + рік" разом
+    // -----------------------------
+    // перевірка "місяць + рік"
+    // -----------------------------
+
     let correctMonthYear = false;
     
     for(const m of monthForms[month].ok){
@@ -98,6 +110,47 @@ function checkHeader(rows, month, year, messages){
         messages.push(`❌ У шапці файлу не знайдено "${monthForms[month].ok.join('" або "')}" ${year}`);
         return true;
     }
+
+    // -----------------------------
+    // пошук можливих опечаток
+    // -----------------------------
+
+    const monthRoots = [
+        "січ","лют","берез","квіт","трав",
+        "черв","лип","серп","верес",
+        "жовт","листопад","груд"
+    ];
+
+    const words = headerText.split(/[^а-яіїєґ]+/);
+
+    for(const w of words){
+
+        if(w.length < 5) continue;
+
+        for(const root of monthRoots){
+
+            if(w.startsWith(root)){
+
+                let valid = false;
+
+                for(const key in monthForms){
+                    if(monthForms[key].all.includes(w)){
+                        valid = true;
+                        break;
+                    }
+                }
+
+                if(!valid){
+                    messages.push(`⚠️ Можлива помилка в назві місяця "${w}"`);
+                    return true;
+                }
+
+            }
+
+        }
+
+    }
+
     return false;
 
 }
