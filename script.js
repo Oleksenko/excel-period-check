@@ -144,11 +144,13 @@ function checkHeader(rows, month, year, messages){
 
     const words = headerText.split(/[^а-яіїєґ]+/);
 
+    const ignoreWords = ["травм","травми","травма"];
+
     for(const w of words){
 
         if(w.length < 5) continue;
 
-        if(w === "травм") continue;
+        if(ignoreWords.includes(w)) continue;
 
         for(const root of monthRoots){
 
