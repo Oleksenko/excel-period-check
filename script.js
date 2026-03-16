@@ -13,6 +13,27 @@ const monthForms = {
     12:{ ok:["грудень","грудні"], all:["грудень","грудня","грудні"] }
 };
 
+function runWithSheetContext(sheetName, messages, fn){
+
+    const before = messages.length;
+
+    const result = fn();
+
+    for(let i = before; i < messages.length; i++){
+
+        if(!messages[i].includes(`Лист "`)){
+            messages[i] = messages[i].replace(
+                /^(❌|⚠️)/,
+                `$1 Лист "${sheetName}":`
+            );
+        }
+
+    }
+
+    return result;
+
+}
+
 function checkHeader(rows, month, year, messages){
 
     const header1 = (rows[0] || []).join(" ").toLowerCase();
@@ -342,11 +363,14 @@ function checkAdditionalSheets(workbook, month, year, messages){
         // передаємо тільки перший рядок
         const headerRows = [
             rows[0] || [],
-            [] // другий рядок пустий щоб функція не зламалась
+            [] 
         ];
 
-        if(checkHeader(headerRows, month, year, messages)){
-            messages.push(`❌ Помилка у шапці листа "${sheetName}"`);
+        if(
+            runWithSheetContext(sheetName, messages, () =>
+                checkHeader(headerRows, month, year, messages)
+            )
+        ){
             hasError = true;
         }
 
