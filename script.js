@@ -181,13 +181,9 @@ function checkHeader(rows, month, year, messages){
 }
 
 function excelDateToJSDate(serial) {
-
-    const utc_days  = Math.floor(serial - 25569);
-    const utc_value = utc_days * 86400;                                        
-    const date_info = new Date(utc_value * 1000);
-
-    return new Date(date_info.getFullYear(), date_info.getMonth(), date_info.getDate());
-
+    const excelEpoch = new Date(Date.UTC(1899, 11, 30));
+    const days = Math.floor(serial);
+    return new Date(excelEpoch.getTime() + days * 86400000);
 }
 
 function parseDates(cellValue) {
