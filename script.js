@@ -244,9 +244,16 @@ function parseDates(cellValue) {
 
 }
 
+function normalizeDate(d) {
+    return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+}
+
 function daysBetween(start, end) {
 
-    const diff = end - start;
+    const s = normalizeDate(start);
+    const e = normalizeDate(end);
+
+    const diff = e - s;
 
     return Math.floor(diff / (1000*60*60*24)) + 1;
 
