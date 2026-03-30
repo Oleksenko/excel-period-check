@@ -246,12 +246,12 @@ function normalizeDate(d) {
 
 function daysBetween(start, end) {
 
-    const s = normalizeDate(start);
-    const e = normalizeDate(end);
+    const s = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+    const e = new Date(end.getFullYear(), end.getMonth(), end.getDate());
 
     const diff = e - s;
 
-    return Math.floor(diff / (1000*60*60*24)) + 1;
+    return Math.round(diff / (1000*60*60*24)) + 1;
 
 }
 
