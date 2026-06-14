@@ -1,149 +1,171 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
+
 <meta charset="UTF-8">
-<title>Перевірка періодів Excel</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
+<title>Validators</title>
 
-body{
-    font-family: Arial, sans-serif;
-    background:#f3f4f6;
-    display:flex;
-    justify-content:center;
-    align-items:flex-start;
-    min-height:100vh;
-    padding:40px 0;
-}
-
-.container{
-    background:white;
-    padding:30px;
-    border-radius:10px;
-    box-shadow:0 4px 15px rgba(0,0,0,0.1);
-    width:420px;
-}
-
-h2{
-    margin-top:0;
-    text-align:center;
-}
-
-.input-group{
-    margin-bottom:15px;
-}
-
-label{
-    font-size:14px;
-    display:block;
-    margin-bottom:5px;
-}
-
-input{
-    width:100%;
-    padding:8px;
-    border-radius:5px;
-    border:1px solid #ccc;
-}
-
-button{
-    width:100%;
-    padding:10px;
-    background:#2563eb;
-    color:white;
-    border:none;
-    border-radius:6px;
-    cursor:pointer;
-    font-size:15px;
-}
-
-button:hover{
-    background:#1d4ed8;
-}
-
-#result{
-    margin-top:20px;
-    font-size:14px;
-    line-height:1.5;
-    max-height:300px;
-    overflow-y:auto;
-    padding-right:5px;
-}
-
-#selectedFile{
-    font-size:13px;
-    color:#444;
-    margin-top:6px;
-    padding:6px 8px;
-    background:#f9fafb;
-    border-radius:5px;
-}
-
-#copyBtn{
-    margin-top:10px;
-    background:#6b7280;
-}
-
-#copyBtn:hover{
-    background:#4b5563;
-}
-
-#copyBtn:disabled{
-    background:#d1d5db;
-    color:#6b7280;
-    cursor:not-allowed;
-    opacity:0.6;
-}
-
-#copyBtn:disabled:hover{
-    background:#d1d5db;
-}
-
-.success{
-    color:green;
-    font-weight:bold;
-}
-
-.error{
-    color:red;
-}
-
-</style>
+<link rel="stylesheet" href="styles.css">
 
 </head>
 
 <body>
 
-<div class="container">
+<div class="app-container">
 
-<h2>Перевірка періодів в Excel</h2>
+    <div class="main-card">
 
-<div class="input-group">
-<label>Місяць</label>
-<input type="number" id="month" min="1" max="12">
+        <h1>📄 Перевірка періодів</h1>
+
+        <!-- Tabs -->
+        <div class="tabs">
+
+            <button
+                class="tab-button active"
+                data-tab="excel"
+            >
+                📊 Excel - ДВГЗ
+            </button>
+
+            <button
+                class="tab-button"
+                data-tab="word"
+            >
+                📄 Word - 70-ка
+            </button>
+
+        </div>
+
+        <div
+            class="tab-content active"
+            id="excel-tab"
+        >
+
+            <div class="input-group">
+
+                <label>Місяць</label>
+
+                <input
+                    type="number"
+                    id="excelMonth"
+                    min="1"
+                    max="12"
+                >
+
+            </div>
+
+            <div class="input-group">
+
+                <label>Рік</label>
+
+                <input
+                    type="number"
+                    id="excelYear"
+                    value="2026"
+                >
+
+            </div>
+
+            <div
+                class="upload-box"
+                id="excelUploadBox"
+            >
+
+                <p>
+                    Перетягніть Excel файл або натисніть
+                </p>
+
+                <input
+                    type="file"
+                    id="excelFileInput"
+                    accept=".xlsx,.xls"
+                >
+
+            </div>
+
+            <div id="excelSelectedFile"></div>
+
+            <div class="buttons">
+
+                <button id="excelCheckBtn">
+                    🔍 Перевірити файл
+                </button>
+
+                <button
+                    id="excelCopyBtn"
+                    disabled
+                >
+                    📋 Копіювати помилки
+                </button>
+
+            </div>
+
+            <div
+                id="excelResult"
+                class="result"
+            ></div>
+
+        </div>
+
+        <div
+            class="tab-content"
+            id="word-tab"
+        >
+
+            <div
+                class="upload-box"
+                id="wordUploadBox"
+            >
+
+                <p>
+                    Перетягніть Word файл або натисніть
+                </p>
+
+                <input
+                    type="file"
+                    id="wordFileInput"
+                    accept=".docx"
+                >
+
+            </div>
+
+            <div id="wordSelectedFile"></div>
+
+            <div class="buttons">
+
+                <button id="wordCheckBtn">
+                    🔍 Перевірити файл
+                </button>
+
+                <button
+                    id="wordCopyBtn"
+                    disabled
+                >
+                    📋 Копіювати помилки
+                </button>
+
+            </div>
+
+            <div
+                id="wordResult"
+                class="result"
+            ></div>
+
+        </div>
+
+    </div>
+
 </div>
 
-<div class="input-group">
-<label>Рік</label>
-<input type="number" id="year" value="2026">
-</div>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script> -->
+<script src="libs/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.21/mammoth.browser.min.js"></script>
 
-<div class="input-group">
-<label>Excel файл</label>
-<input type="file" id="fileInput" accept=".xlsx,.xls">
-<div id="selectedFile"></div>
-</div>
-
-<button id="checkBtn">Перевірити файл</button>
-
-<button id="copyBtn" disabled>📋 Скопіювати помилки</button>
-
-<div id="result"></div>
-
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-<script src="script.js"></script>
+<script src="validators/excel-validator.js"></script>
+<script src="validators/word-validator.js"></script>
+<script src="app.js"></script>
 
 </body>
 </html>
