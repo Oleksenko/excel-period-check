@@ -510,6 +510,15 @@ document.getElementById("wordCheckBtn").addEventListener("click", async () => {
 
         const tables = extractTablesFromHtml(mammothResult.value);
 
+        console.log("Знайдено HTML-таблиць:", tables.length);
+
+        tables.forEach((table, index) => {
+            console.log(
+                `Таблиця ${index + 1}:`,
+                table.outerHTML
+            );
+        });
+
         const checkResult = checkTables(tables);
 
         const errors = checkResult.errors;
